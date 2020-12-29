@@ -14,7 +14,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
+  String _message = 'Unknown';
 
   @override
   void initState() {
@@ -24,8 +24,13 @@ class _MyAppState extends State<MyApp> {
 
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
-    String platformVersion;
+    String message;
     // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      message = await FlutterMediaCache.getProxyUrl("http://inspire.mktask.com/dcld/game/efac6cfa93131428fd775dadc0c4557a.mp4");
+    } catch(e) {
+      message = "Fail";
+    }
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
@@ -33,7 +38,7 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     setState(() {
-      _platformVersion = platformVersion;
+      _message = message;
     });
   }
 
@@ -45,7 +50,7 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Text('Running on: $_message\n'),
         ),
       ),
     );

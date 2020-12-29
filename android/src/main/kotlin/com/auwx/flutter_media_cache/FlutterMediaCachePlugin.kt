@@ -11,13 +11,17 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 /** FlutterMediaCachePlugin */
 class FlutterMediaCachePlugin : FlutterPlugin, MethodCallHandler {
     companion object {
         private const val TAG = "MediaCachePlugin"
-        private const val LOG = true
+        private const val LOG = false
     }
 
     private lateinit var channel: MethodChannel
@@ -72,8 +76,18 @@ class FlutterMediaCachePlugin : FlutterPlugin, MethodCallHandler {
         if (call.method == "getProxyUrl") {
             val url = call.argument<String>("url")!!
             val name = call.argument<String>("file-name")
+
             generation[url] = name
-            result.success(server.getProxyUrl(url))
+
+            GlobalScope.launch {
+//                val start = System.currentTimeMillis()
+//                if (LOG) Log.d(TAG, "getProxyUrl: start")
+                val proxyUrl = server.getProxyUrl(url)
+//                if (LOG) Log.d(TAG, "getProxyUrl: end ${System.currentTimeMillis() - start}ms, $proxyUrl")
+                withContext(Dispatchers.Main) {
+                    result.success(proxyUrl)
+                }
+            }
         } else {
             result.notImplemented()
         }
