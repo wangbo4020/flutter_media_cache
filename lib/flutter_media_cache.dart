@@ -13,11 +13,11 @@ class FlutterMediaCache {
   /// [url] 需要缓存的视频链接
   ///
   /// [name] 缓存后本地文件
-  static Future<String> getProxyUrl(String url, {String name}) {
+  static Future<String> getProxyUrl(String url, {String? name}) {
     return _channel.invokeMethod('getProxyUrl', {
       'url': url,
       "file-name": name,
-    });
+    }).then((v) => v);
   }
 
   /// 监听缓存进度
